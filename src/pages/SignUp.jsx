@@ -1,14 +1,39 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 
 import dirtBike from "../assets/images/dirt-bike.png";
+import auth from "../utils/firebase.init";
 
 const SignUp = () => {
-  const { handleSubmit, register, control } = useForm();
+  const { handleSubmit, register } = useForm();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/register";
 
-  const handleCreateUser = (data) => control.log(data); //creating new user
+  const handleCreateUser = (data) => {
+    const { email, password } = data;
+    if (email && password) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          // ...
+          toast.success("Account created successfully");
+          navigate(from, { replace: true });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log("error", errorCode, errorMessage);
+          toast.error("Oops! failed to sign-up");
+        });
+    } else {
+      toast.error("Please fill-up registration from first");
+    }
+  }; //creating new user
 
   return (
     <div className="flex h-screen items-center pt-14">
@@ -49,10 +74,7 @@ const SignUp = () => {
                 />
               </div>
               <div className="!mt-8 ">
-                <button
-                  type="submit"
-                  className="font-bold text-white py-3 rounded-full bg-primary w-full disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
+                <button type="submit" className="btn-hr-primary">
                   Sign up
                 </button>
               </div>

@@ -1,14 +1,38 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import dirtBike from "../assets/images/dirt-bike.png";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from "../utils/firebase.init";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/register";
 
-  const handleLogin = (data) => console.log(data); //Login User
+  const handleLogin = (data) => {
+    const { email, password } = data;
+    if (email && password) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          toast.success("Login successful");
+          navigate(from, { replace: true });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          toast.error("Oops! failed to login");
+          console.log("error", errorCode, errorMessage);
+        });
+    } else {
+      toast.error("Please insert login credentials first");
+    }
+  };
 
   return (
     <div className="flex h-screen items-center">
@@ -33,7 +57,7 @@ const Login = () => {
                 <input type="password" id="password" {...register("password")} />
               </div>
               <div className="relative !mt-8">
-                <button type="submit" className="btn-primary">
+                <button type="submit" className="btn-hr-primary">
                   Login
                 </button>
               </div>

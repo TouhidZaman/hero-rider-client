@@ -37,10 +37,10 @@
   }
 }
 
-.btn-action {
+.btn-hr-action {
   @apply rounded-lg w-full text-primary border border-primary
 }
 
-.btn-primary {
+.btn-hr-primary {
   @apply font-bold text-white py-3 rounded-full bg-primary w-full
 }
