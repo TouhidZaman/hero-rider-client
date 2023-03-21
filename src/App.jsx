@@ -1,8 +1,6 @@
+import { RouterProvider } from "react-router-dom";
+import router from "./routes/routes";
+
 export default function App() {
-  return (
-    <div className="text-center">
-      <h1 className="text-3xl font-bold py-8">Welcome to hero rider</h1>
-      <button class="btn btn-primary w-64 rounded-full">Button</button>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
