@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
@@ -6,12 +6,21 @@ import dirtBike from "../assets/images/dirt-bike.png";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import auth from "../utils/firebase.init";
 import { toast } from "react-hot-toast";
+import { AuthContext } from "../context/AuthProvider";
 
 const Login = () => {
+  const { user, isLoading } = useContext(AuthContext);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/register";
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      toast.success("Login successful");
+      navigate(from, { replace: true });
+    }
+  }, [isLoading, user, navigate, from]);
 
   const handleLogin = (data) => {
     const { email, password } = data;
@@ -20,8 +29,6 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          toast.success("Login successful");
-          navigate(from, { replace: true });
         })
         .catch((error) => {
           const errorCode = error.code;

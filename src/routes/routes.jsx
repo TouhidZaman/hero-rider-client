@@ -7,6 +7,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import RiderCreator from "../pages/RiderCreator";
 import SignUp from "../pages/SignUp";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -27,15 +28,27 @@ const router = createBrowserRouter([
       },
       {
         path: "/register",
-        element: <Register />,
+        element: (
+          <PrivateRoute>
+            <Register />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/rider-creator",
-        element: <RiderCreator />,
+        element: (
+          <PrivateRoute>
+            <RiderCreator />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/learner-creator",
-        element: <LearnerCreator />,
+        element: (
+          <PrivateRoute>
+            <LearnerCreator />
+          </PrivateRoute>
+        ),
       },
       {
         path: "*",

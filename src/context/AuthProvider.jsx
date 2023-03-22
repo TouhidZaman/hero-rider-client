@@ -1,15 +1,35 @@
-import { createContext, useMemo, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { createContext, useEffect, useMemo, useState } from "react";
+import auth from "../utils/firebase.init";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    });
+  }, []);
+
+  const logOut = () => {
+    setUser(null);
+    setIsLoading(false);
+  };
+
   const AuthContextValues = useMemo(() => ({
     user,
     setUser,
-    loading,
-    setLoading,
+    isLoading,
+    setIsLoading,
+    logOut,
   }));
 
   return (
