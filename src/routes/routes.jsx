@@ -1,4 +1,6 @@
-import { createBrowserRouter } from "react-router-dom";
+import React from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import DashboardLayout from "../layouts/DashboardLayout";
 import NotFound from "../components/NotFound";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
@@ -7,7 +9,10 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import RiderCreator from "../pages/RiderCreator";
 import SignUp from "../pages/SignUp";
-import PrivateRoute from "./PrivateRoute";
+import AllUsers from "../pages/AllUsers";
+import MyProfile from "../pages/MyProfile";
+import ProtectRegister from "./ProtectRegister";
+import ProtectDashboard from "./ProtectDashboard";
 
 const router = createBrowserRouter([
   {
@@ -29,26 +34,48 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: (
-          <PrivateRoute>
+          <ProtectRegister>
             <Register />
-          </PrivateRoute>
+          </ProtectRegister>
         ),
       },
       {
         path: "/rider-creator",
         element: (
-          <PrivateRoute>
+          <ProtectRegister>
             <RiderCreator />
-          </PrivateRoute>
+          </ProtectRegister>
         ),
       },
       {
         path: "/learner-creator",
         element: (
-          <PrivateRoute>
+          <ProtectRegister>
             <LearnerCreator />
-          </PrivateRoute>
+          </ProtectRegister>
         ),
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <ProtectDashboard>
+            <DashboardLayout />
+          </ProtectDashboard>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to={"my-profile"} />,
+          },
+          {
+            path: "my-profile",
+            element: <MyProfile />,
+          },
+          {
+            path: "all-users",
+            element: <AllUsers />,
+          },
+        ],
       },
       {
         path: "*",

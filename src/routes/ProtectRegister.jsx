@@ -4,11 +4,8 @@ import { Navigate, useLocation } from "react-router-dom";
 import Loading from "../components/loaders/Loading";
 import { AuthContext } from "../context/AuthProvider";
 
-const PrivateRoute = ({ children }) => {
+const ProtectRegister = ({ children }) => {
   const { user, isLoading } = useContext(AuthContext);
-
-  // console.log("user:", user);
-  // console.log("loading:", isLoading);
 
   const { pathname } = useLocation();
 
@@ -27,4 +24,4 @@ const PrivateRoute = ({ children }) => {
   return children;
 };
 
-export default PrivateRoute;
+export default ProtectRegister;
