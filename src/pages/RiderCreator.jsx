@@ -67,12 +67,13 @@ const RiderCreator = () => {
         toast.success("Rider Registration Successful");
         navigate("/dashboard");
         console.log(response.data);
+        setLoading(false);
       })
       .catch((error) => {
         toast.error("Oops Rider Registration Failed");
-        control.log("post error:", error);
+        console.log("post error:", error);
+        setLoading(false);
       });
-    setLoading(false);
   };
 
   return (

@@ -1,11 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import Loading from "../components/loaders/Loading";
 import { AuthContext } from "../context/AuthProvider";
+import axiosInstance from "../utils/axiosInstance";
+import getImgUrl from "../utils/imgToUrl";
 
 const LearnerCreator = () => {
   const { user } = useContext(AuthContext);
   const { handleSubmit, register, reset, control } = useForm();
   const term = useWatch({ control, name: "term" });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // effect runs when user state is updated
   useEffect(() => {
@@ -13,7 +20,46 @@ const LearnerCreator = () => {
     reset({ email: user?.email });
   }, [user, reset]);
 
-  const handleLearnerCreate = (data) => console.log(data);
+  if (loading) return <Loading />;
+
+  const handleLearnerCreate = async (data) => {
+    setLoading(true); // learner creation started
+    const {
+      fullName,
+      // email,
+      age,
+      phone,
+      address,
+      vehicleType,
+      nid,
+      profile,
+    } = data;
+    const newLearner = {
+      displayName: fullName,
+      email: user.email,
+      age,
+      phoneNumber: phone,
+      address,
+      vehicleType,
+      role: "learner",
+      nid: await getImgUrl(nid[0]),
+      photoURL: await getImgUrl(profile[0]),
+    };
+    // console.log("new Learner", newLearner);
+    axiosInstance
+      .post("users", newLearner)
+      .then((response) => {
+        toast.success("Learner Registration Successful");
+        navigate("/dashboard");
+        console.log(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        toast.error("Oops Learner Registration Failed");
+        console.log("post error:", error);
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="flex justify-center items-center overflow-auto p-10">
@@ -50,7 +96,7 @@ const LearnerCreator = () => {
           <label className="mb-2" htmlFor="phone">
             Phone
           </label>
-          <input type="number" id="phone" {...register("phone")} />
+          <input type="text" id="phone" {...register("phone")} />
         </div>
 
         <div className="flex flex-col w-full max-w-xs">
