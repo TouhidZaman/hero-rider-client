@@ -1,5 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useEffect, useMemo, useState } from "react";
+import axiosInstance from "../utils/axiosInstance";
 import auth from "../utils/firebase.init";
 
 export const AuthContext = createContext();
@@ -11,8 +12,16 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
-        setIsLoading(false);
+        axiosInstance.get(`users/email/${user.email}`).then((res) => {
+          const dbUser = res.data;
+          if (dbUser?.email) {
+            setUser(dbUser);
+            // console.log(res.data, "user by email");
+          } else {
+            setUser(user);
+          }
+          setIsLoading(false);
+        });
       } else {
         setIsLoading(false);
       }

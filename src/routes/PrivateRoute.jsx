@@ -7,8 +7,8 @@ import { AuthContext } from "../context/AuthProvider";
 const PrivateRoute = ({ children }) => {
   const { user, isLoading } = useContext(AuthContext);
 
-  console.log("user:", user);
-  console.log("loading:", isLoading);
+  // console.log("user:", user);
+  // console.log("loading:", isLoading);
 
   const { pathname } = useLocation();
 
@@ -18,6 +18,10 @@ const PrivateRoute = ({ children }) => {
 
   if (!isLoading && !user) {
     return <Navigate to="/login" state={{ path: pathname }} />;
+  }
+
+  if (!isLoading && user?.role) {
+    return <Navigate to="/dashboard" />;
   }
 
   return children;

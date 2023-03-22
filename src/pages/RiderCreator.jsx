@@ -1,12 +1,19 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import Loading from "../components/loaders/Loading";
 
 import { AuthContext } from "../context/AuthProvider";
+import axiosInstance from "../utils/axiosInstance";
+import getImgUrl from "../utils/imgToUrl";
 
 const RiderCreator = () => {
   const { user } = useContext(AuthContext);
   const { handleSubmit, register, reset, control } = useForm();
+  const [loading, setLoading] = useState(false);
   const term = useWatch({ control, name: "term" });
+  const navigate = useNavigate();
 
   // effect runs when user state is updated
   useEffect(() => {
@@ -14,7 +21,59 @@ const RiderCreator = () => {
     reset({ email: user?.email });
   }, [user, reset]);
 
-  const handleRiderCreate = (data) => console.log(data);
+  if (loading) return <Loading />;
+
+  const handleRiderCreate = async (data) => {
+    setLoading(true); // rider creation started
+    const {
+      fullName,
+      // email,
+      age,
+      gender,
+      phone,
+      address,
+      area,
+      vehicleType,
+      carName,
+      carModel,
+      carNamePalate,
+      drivingLicense,
+      nid,
+      profile,
+    } = data;
+    const newRider = {
+      displayName: fullName,
+      email: user.email,
+      age,
+      gender,
+      phoneNumber: phone,
+      address,
+      area,
+      vehicleType,
+      carInfo: {
+        name: carName,
+        model: carModel,
+        namePalate: carNamePalate,
+      },
+      role: "rider",
+      drivingLicense: await getImgUrl(drivingLicense[0]),
+      nid: await getImgUrl(nid[0]),
+      photoURL: await getImgUrl(profile[0]),
+    };
+    // console.log("new rider", newRider);
+    axiosInstance
+      .post("users", newRider)
+      .then((response) => {
+        toast.success("Rider Registration Successful");
+        navigate("/dashboard");
+        console.log(response.data);
+      })
+      .catch((error) => {
+        toast.error("Oops Rider Registration Failed");
+        control.log("post error:", error);
+      });
+    setLoading(false);
+  };
 
   return (
     <div className="flex justify-center items-center overflow-auto p-10">
@@ -79,7 +138,7 @@ const RiderCreator = () => {
           <label className="mb-2" htmlFor="phone">
             Phone
           </label>
-          <input type="number" id="phone" {...register("phone")} />
+          <input type="text" id="phone" {...register("phone")} />
         </div>
 
         <div className="flex flex-col w-full max-w-xs">
