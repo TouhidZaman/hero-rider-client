@@ -3,7 +3,7 @@ import React from "react";
 
 const DashboardLayout = () => {
   return (
-    <div className="drawer drawer-mobile">
+    <div className="drawer drawer-mobile h-[calc(100vh-95px)] overflow-hidden">
       <input id="dashboard-side-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/*  Page content here */}
@@ -11,7 +11,7 @@ const DashboardLayout = () => {
       </div>
       <div className="drawer-side">
         <label htmlFor="dashboard-side-drawer" className="drawer-overlay"></label>
-        <ul className="menu overflow-y-auto w-60 bg-base-200 text-base-content">
+        <ul className="menu overflow-y-auto h-100 w-60 bg-base-200 text-base-content">
           {/*  Sidebar content here */}
           <li className="border-b border-primary">
             <Link to={"my-profile"}>My Profile</Link>

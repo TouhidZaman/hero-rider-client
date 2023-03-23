@@ -8,7 +8,7 @@ import axiosInstance from "../utils/axiosInstance";
 import getImgUrl from "../utils/imgToUrl";
 
 const LearnerCreator = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { handleSubmit, register, reset, control } = useForm();
   const term = useWatch({ control, name: "term" });
   const [loading, setLoading] = useState(false);
@@ -19,6 +19,12 @@ const LearnerCreator = () => {
     // reset form with user data
     reset({ email: user?.email });
   }, [user, reset]);
+
+  useEffect(() => {
+    if (!loading && user?.role) {
+      navigate("/dashboard");
+    }
+  }, [loading, user?.role, navigate]);
 
   if (loading) return <Loading />;
 
@@ -50,8 +56,8 @@ const LearnerCreator = () => {
       .post("users", newLearner)
       .then((response) => {
         toast.success("Learner Registration Successful");
-        navigate("/dashboard");
-        console.log(response.data);
+        // console.log(response.data);
+        setUser({ ...newLearner, _id: response.data.insertedId });
         setLoading(false);
       })
       .catch((error) => {
