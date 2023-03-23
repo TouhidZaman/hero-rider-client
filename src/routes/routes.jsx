@@ -13,6 +13,7 @@ import AllUsers from "../pages/AllUsers";
 import MyProfile from "../pages/MyProfile";
 import ProtectRegister from "./ProtectRegister";
 import ProtectDashboard from "./ProtectDashboard";
+import ProtectAdminRoute from "./ProtectAdminRoute";
 
 const router = createBrowserRouter([
   {
@@ -73,7 +74,11 @@ const router = createBrowserRouter([
           },
           {
             path: "all-users",
-            element: <AllUsers />,
+            element: (
+              <ProtectAdminRoute>
+                <AllUsers />,
+              </ProtectAdminRoute>
+            ),
           },
         ],
       },

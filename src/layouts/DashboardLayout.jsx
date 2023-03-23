@@ -1,7 +1,10 @@
+import React, { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
-import React from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 const DashboardLayout = () => {
+  const { user } = useContext(AuthContext);
+
   return (
     <div className="drawer drawer-mobile h-[calc(100vh-95px)] overflow-hidden">
       <input id="dashboard-side-drawer" type="checkbox" className="drawer-toggle" />
@@ -16,9 +19,11 @@ const DashboardLayout = () => {
           <li className="border-b border-primary">
             <Link to={"my-profile"}>My Profile</Link>
           </li>
-          <li className="border-b border-primary">
-            <Link to={"all-users"}>All Users</Link>
-          </li>
+          {user.role === "admin" ? (
+            <li className="border-b border-primary">
+              <Link to={"all-users"}>All Users</Link>
+            </li>
+          ) : null}
         </ul>
       </div>
     </div>

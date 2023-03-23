@@ -50,7 +50,7 @@ const RiderCreator = () => {
     const newRider = {
       displayName: fullName,
       email: user.email,
-      age,
+      age: +age,
       gender,
       phoneNumber: phone,
       address,

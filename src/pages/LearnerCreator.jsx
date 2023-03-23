@@ -43,7 +43,7 @@ const LearnerCreator = () => {
     const newLearner = {
       displayName: fullName,
       email: user.email,
-      age,
+      age: +age,
       phoneNumber: phone,
       address,
       vehicleType,
