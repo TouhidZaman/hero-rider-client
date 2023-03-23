@@ -5,10 +5,16 @@ import Loading from "../components/loaders/Loading";
 
 const AllUsers = () => {
   const [search, setSearch] = useState("");
-  const { isLoading, data: users = [] } = useQuery({
-    queryKey: ["repoData"],
-    queryFn: () => axiosInstance.get("users").then((res) => res.data),
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10); // two data will be shown per page
+  const { isLoading, data: { count, users } = {} } = useQuery({
+    queryKey: ["repoData", currentPage],
+    queryFn: () =>
+      axiosInstance
+        .get(`users?limit=${pageSize}&page=${currentPage}`)
+        .then((res) => res.data),
   });
+  const pages = Math.ceil(count / pageSize);
 
   if (isLoading) return <Loading />;
 
@@ -82,10 +88,34 @@ const AllUsers = () => {
             ))}
           </tbody>
         </table>
-        <div className="flex justify-center my-8">
-          <div className="btn-group grid grid-cols-2">
-            <button className="btn btn-outline">Previous page</button>
-            <button className="btn btn-outline">Next</button>
+        <div className="flex justify-center mt-14">
+          <div className="btn-group">
+            <button
+              disabled={!currentPage}
+              onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+              className="btn btn-outline"
+            >
+              Previous page
+            </button>
+            {[...Array(pages).keys()].map((number) => (
+              <button
+                type="button"
+                className={`btn btn-outline ${
+                  number === currentPage ? "btn-active" : ""
+                }`}
+                key={number}
+                onClick={() => setCurrentPage(number)}
+              >
+                {number + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+              className="btn btn-outline"
+              disabled={pages === currentPage + 1}
+            >
+              Next Page
+            </button>
           </div>
         </div>
       </div>
